@@ -44,7 +44,77 @@ export const useTransactions = () => {
           }));
           setTransactions(hydrated);
         } else {
-          setTransactions([]);
+          // SEED SAMPLE DATA FOR DEMO
+          const now = Math.floor(Date.now() / 1000);
+          const day = 86400;
+          const seedData = [
+            {
+              id: 'seed-1',
+              userId: user.uid,
+              type: 'income',
+              amount: 5000,
+              category: 'Salary',
+              description: 'Monthly Salary',
+              date: { seconds: now - day * 10, nanoseconds: 0 }
+            },
+            {
+              id: 'seed-2',
+              userId: user.uid,
+              type: 'expense',
+              amount: 1500,
+              category: 'Rent',
+              description: 'Apartment Rent',
+              date: { seconds: now - day * 9, nanoseconds: 0 }
+            },
+            {
+              id: 'seed-3',
+              userId: user.uid,
+              type: 'expense',
+              amount: 450,
+              category: 'Groceries',
+              description: 'Weekly Groceries',
+              date: { seconds: now - day * 5, nanoseconds: 0 }
+            },
+            {
+              id: 'seed-4',
+              userId: user.uid,
+              type: 'income',
+              amount: 1200,
+              category: 'Freelance',
+              description: 'Website Project',
+              date: { seconds: now - day * 3, nanoseconds: 0 }
+            },
+            {
+              id: 'seed-5',
+              userId: user.uid,
+              type: 'expense',
+              amount: 120,
+              category: 'Utilities',
+              description: 'Electricity Bill',
+              date: { seconds: now - day * 2, nanoseconds: 0 }
+            },
+            {
+              id: 'seed-6',
+              userId: user.uid,
+              type: 'expense',
+              amount: 200,
+              category: 'Entertainment',
+              description: 'Movie Night',
+              date: { seconds: now - day * 1, nanoseconds: 0 }
+            }
+          ];
+          
+          localStorage.setItem(`transactions_${user.uid}`, JSON.stringify(seedData));
+          
+          const hydrated = seedData.map((t: any) => ({
+            ...t,
+            date: {
+              seconds: t.date?.seconds || Math.floor(Date.now() / 1000),
+              nanoseconds: t.date?.nanoseconds || 0,
+              toDate: () => new Date((t.date?.seconds || Math.floor(Date.now() / 1000)) * 1000)
+            }
+          }));
+          setTransactions(hydrated as unknown as Transaction[]);
         }
       } catch (e) {
         console.error("LocalStorage error:", e);
