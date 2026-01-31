@@ -70,7 +70,7 @@ const Dashboard = () => {
         <div className="bg-slate-900 p-6 rounded-xl border border-slate-800">
           <h3 className="text-slate-400 text-sm font-medium">Current Balance</h3>
           <p className={`text-3xl font-bold mt-2 ${balance >= 0 ? 'text-white' : 'text-red-400'}`}>
-            ${balance.toFixed(2)}
+            #{balance.toFixed(2)}
           </p>
         </div>
         
@@ -79,7 +79,7 @@ const Dashboard = () => {
              <ArrowUpRight size={48} className="text-emerald-500" />
           </div>
           <h3 className="text-slate-400 text-sm font-medium">Total Income</h3>
-          <p className="text-3xl font-bold text-emerald-400 mt-2">${totals.income.toFixed(2)}</p>
+          <p className="text-3xl font-bold text-emerald-400 mt-2">#{totals.income.toFixed(2)}</p>
         </div>
 
         <div className="bg-slate-900 p-6 rounded-xl border border-slate-800 relative overflow-hidden">
@@ -87,7 +87,7 @@ const Dashboard = () => {
              <ArrowDownRight size={48} className="text-red-500" />
           </div>
           <h3 className="text-slate-400 text-sm font-medium">Total Expenses</h3>
-          <p className="text-3xl font-bold text-red-400 mt-2">${totals.expense.toFixed(2)}</p>
+          <p className="text-3xl font-bold text-red-400 mt-2">#{totals.expense.toFixed(2)}</p>
         </div>
       </div>
 
