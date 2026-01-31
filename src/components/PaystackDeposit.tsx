@@ -4,7 +4,7 @@ import { CreditCard, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Transaction } from '../types';
 
-const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
+const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
 
 interface PaystackDepositProps {
   onClose: () => void;
@@ -17,7 +17,7 @@ const PaystackDeposit: React.FC<PaystackDepositProps> = ({ onClose, onDeposit })
 
   const config = {
     reference: (new Date()).getTime().toString(),
-    email: user?.email || '',
+    email: user?.email || 'user@example.com',
     amount: Number(amount) * 100, // Paystack expects amount in kobo
     publicKey: PAYSTACK_PUBLIC_KEY,
   };

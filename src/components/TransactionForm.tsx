@@ -29,7 +29,14 @@ const CATEGORIES = [
 ];
 
 const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onSubmit }) => {
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<TransactionFormData>();
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<TransactionFormData>({
+    defaultValues: {
+      type: 'expense',
+      amount: 0,
+      category: '',
+      description: ''
+    }
+  });
 
   const onFormSubmit = async (data: TransactionFormData) => {
     await onSubmit(data);
@@ -55,7 +62,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose, onSubmit }) 
                   type="radio"
                   value="expense"
                   className="peer sr-only"
-                  defaultChecked
                   {...register('type')}
                 />
                 <div className="text-center py-2 rounded-lg border border-slate-700 bg-slate-800 text-slate-400 peer-checked:bg-red-500/20 peer-checked:border-red-500 peer-checked:text-red-500 transition-all">

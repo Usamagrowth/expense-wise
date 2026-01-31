@@ -37,9 +37,9 @@ export const useTransactions = () => {
           const hydrated = parsed.map((t: any) => ({
             ...t,
             date: {
-              seconds: t.date.seconds,
-              nanoseconds: t.date.nanoseconds,
-              toDate: () => new Date(t.date.seconds * 1000)
+              seconds: t.date?.seconds || Math.floor(Date.now() / 1000),
+              nanoseconds: t.date?.nanoseconds || 0,
+              toDate: () => new Date((t.date?.seconds || Math.floor(Date.now() / 1000)) * 1000)
             }
           }));
           setTransactions(hydrated);
