@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth, db } from '../services/firebase';
-import { doc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
+import { doc, setDoc } from 'firebase/firestore';
 import { Lock, Mail, User } from 'lucide-react';
 
 const Register = () => {
@@ -22,7 +22,6 @@ const Register = () => {
 
     try {
       if (!auth) {
-        // Demo mode fallback
         console.warn("Firebase not configured. Registering as demo user.");
         await new Promise(resolve => setTimeout(resolve, 1000));
         loginDemo();
@@ -36,16 +35,14 @@ const Register = () => {
       });
       
       // Create user document in Firestore
-      if (db) {
-        await setDoc(doc(db, "users", userCredential.user.uid), {
-          uid: userCredential.user.uid,
-          displayName: name,
-          email: email,
-          createdAt: new Date()
-        });
-      }
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        uid: userCredential.user.uid,
+        displayName: name,
+        email: email,
+        createdAt: new Date()
+      });
 
-      navigate('/login');
+      navigate('/');
     } catch (err: any) {
       setError(err.message || 'Failed to register.');
       console.error(err);

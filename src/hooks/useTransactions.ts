@@ -95,18 +95,25 @@ export const useTransactions = () => {
           amount: Number(transaction.amount)
         } as unknown as Transaction;
 
-        const current = [...transactions, newTransaction];
-        // Sort by date desc
-        current.sort((a, b) => {
-            // @ts-ignore
-            return b.date.seconds - a.date.seconds; 
-        });
-
-        // We need to strip the toDate function before saving to localStorage
-        // because JSON.stringify removes functions anyway, but let's be clean.
-        // Actually JSON.stringify simply ignores functions, so it's fine.
-        localStorage.setItem(`transactions_${user.uid}`, JSON.stringify(current));
-        setTransactions(current);
+        // READ FRESH FROM STORAGE TO AVOID STALE STATE
+        const stored = localStorage.getItem(`transactions_${user.uid}`);
+        const currentTransactions = stored ? JSON.parse(stored) : [];
+        
+        const updated = [newTransaction, ...currentTransactions];
+        
+        localStorage.setItem(`transactions_${user.uid}`, JSON.stringify(updated));
+        
+        // Re-hydrate everything to ensure consistency
+        const hydrated = updated.map((t: any) => ({
+            ...t,
+            date: {
+              seconds: t.date?.seconds || Math.floor(Date.now() / 1000),
+              nanoseconds: t.date?.nanoseconds || 0,
+              toDate: () => new Date((t.date?.seconds || Math.floor(Date.now() / 1000)) * 1000)
+            }
+        }));
+        
+        setTransactions(hydrated);
         return;
       } catch (err) {
         console.error(err);
