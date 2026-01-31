@@ -27,7 +27,7 @@ const Login = () => {
         navigate('/dashboard');
         return;
       }
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth!, email, password);
       navigate('/dashboard');
     } catch (err: any) {
       setError('Failed to login. Please check your credentials.');

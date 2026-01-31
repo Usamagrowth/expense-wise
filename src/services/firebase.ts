@@ -13,9 +13,9 @@ const firebaseConfig = {
 };
 
 let app;
-let auth: Auth;
-let db: Firestore;
-let storage: FirebaseStorage;
+let auth: Auth | undefined;
+let db: Firestore | undefined;
+let storage: FirebaseStorage | undefined;
 
 try {
   // Only initialize if we have a valid-looking API key (simple check)

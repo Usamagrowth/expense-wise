@@ -55,7 +55,7 @@ export const useTransactions = () => {
     }
 
     const q = query(
-      collection(db, 'transactions'),
+      collection(db!, 'transactions'),
       where('userId', '==', user.uid),
       orderBy('date', 'desc')
     );
@@ -122,7 +122,7 @@ export const useTransactions = () => {
     }
 
     try {
-      await addDoc(collection(db, 'transactions'), {
+      await addDoc(collection(db!, 'transactions'), {
         ...transaction,
         userId: user.uid,
         date: Timestamp.now(),
@@ -170,7 +170,7 @@ export const useTransactions = () => {
     }
 
     try {
-      await deleteDoc(doc(db, 'transactions', id));
+      await deleteDoc(doc(db!, 'transactions', id));
     } catch (err) {
       console.error(err);
       throw new Error('Failed to delete transaction');

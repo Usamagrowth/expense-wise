@@ -21,7 +21,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      if (!auth) {
+      if (!auth || !db) {
         console.warn("Firebase not configured. Registering as demo user.");
         await new Promise(resolve => setTimeout(resolve, 1000));
         loginDemo();
@@ -29,13 +29,13 @@ const Register = () => {
         return;
       }
 
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth!, email, password);
       await updateProfile(userCredential.user, {
         displayName: name
       });
       
       // Create user document in Firestore
-      await setDoc(doc(db, "users", userCredential.user.uid), {
+      await setDoc(doc(db!, "users", userCredential.user.uid), {
         uid: userCredential.user.uid,
         displayName: name,
         email: email,
