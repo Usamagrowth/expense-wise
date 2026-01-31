@@ -33,15 +33,16 @@ export const useTransactions = () => {
         const stored = localStorage.getItem(`transactions_${user.uid}`);
         if (stored) {
           const parsed = JSON.parse(stored);
-          // Convert stored string dates back to objects if needed, 
-          // but our Transaction type likely expects Firestore Timestamp or similar.
-          // Let's assume for demo mode we handle simple dates.
-          // We might need to normalize the date format to match what the UI expects (likely .toDate() or similar if it was Timestamp).
-          // However, for simplicity, let's just use the array.
-          // Note: The UI likely expects { date: { seconds: ... } } or a Date object.
-          // If using Firestore, we get Timestamp.
-          // Let's ensure we return something compatible.
-          setTransactions(parsed);
+          // Hydrate the date objects to have a .toDate() method
+          const hydrated = parsed.map((t: any) => ({
+            ...t,
+            date: {
+              seconds: t.date.seconds,
+              nanoseconds: t.date.nanoseconds,
+              toDate: () => new Date(t.date.seconds * 1000)
+            }
+          }));
+          setTransactions(hydrated);
         } else {
           setTransactions([]);
         }
@@ -81,11 +82,16 @@ export const useTransactions = () => {
     // Demo Mode / LocalStorage Fallback
     if (!db || user.providerId === 'demo' || localStorage.getItem('demo_mode') === 'true') {
       try {
+        const now = Math.floor(Date.now() / 1000);
         const newTransaction = {
           ...transaction,
           id: Date.now().toString(),
           userId: user.uid,
-          date: { seconds: Math.floor(Date.now() / 1000), nanoseconds: 0 }, // Mock Firestore Timestamp
+          date: { 
+            seconds: now, 
+            nanoseconds: 0,
+            toDate: () => new Date(now * 1000) 
+          }, 
           amount: Number(transaction.amount)
         } as unknown as Transaction;
 
@@ -96,6 +102,9 @@ export const useTransactions = () => {
             return b.date.seconds - a.date.seconds; 
         });
 
+        // We need to strip the toDate function before saving to localStorage
+        // because JSON.stringify removes functions anyway, but let's be clean.
+        // Actually JSON.stringify simply ignores functions, so it's fine.
         localStorage.setItem(`transactions_${user.uid}`, JSON.stringify(current));
         setTransactions(current);
         return;

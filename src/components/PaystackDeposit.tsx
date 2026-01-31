@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import { usePaystackPayment } from 'react-paystack';
 import { CreditCard, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { useTransactions } from '../hooks/useTransactions';
+import { Transaction } from '../types';
 
 const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
 
 interface PaystackDepositProps {
   onClose: () => void;
+  onDeposit: (transaction: Omit<Transaction, 'id' | 'userId' | 'date'>) => Promise<void>;
 }
 
-const PaystackDeposit: React.FC<PaystackDepositProps> = ({ onClose }) => {
+const PaystackDeposit: React.FC<PaystackDepositProps> = ({ onClose, onDeposit }) => {
   const [amount, setAmount] = useState<string>('');
   const { user } = useAuth();
-  const { addTransaction } = useTransactions();
 
   const config = {
     reference: (new Date()).getTime().toString(),
@@ -22,9 +22,9 @@ const PaystackDeposit: React.FC<PaystackDepositProps> = ({ onClose }) => {
     publicKey: PAYSTACK_PUBLIC_KEY,
   };
 
-  const onSuccess = (reference: any) => {
+  const onSuccess = async (reference: any) => {
     // Add transaction as income
-    addTransaction({
+    await onDeposit({
       amount: Number(amount),
       category: 'Income',
       description: 'Deposit via Paystack',

@@ -5,6 +5,7 @@ import TransactionForm, { TransactionFormData } from '../components/TransactionF
 import PaystackDeposit from '../components/PaystackDeposit';
 import DashboardCharts from '../components/DashboardCharts';
 import { format } from 'date-fns';
+import { Transaction } from '../types';
 
 const Dashboard = () => {
   const { transactions, loading, addTransaction, deleteTransaction, totals, balance } = useTransactions();
@@ -16,6 +17,14 @@ const Dashboard = () => {
       await addTransaction(data);
     } catch (error) {
       console.error("Failed to add transaction", error);
+    }
+  };
+
+  const handleDeposit = async (data: Omit<Transaction, 'id' | 'userId' | 'date'>) => {
+    try {
+      await addTransaction(data);
+    } catch (error) {
+      console.error("Failed to add deposit", error);
     }
   };
 
@@ -135,6 +144,13 @@ const Dashboard = () => {
         <TransactionForm 
           onClose={() => setIsModalOpen(false)} 
           onSubmit={handleAddTransaction}
+        />
+      )}
+
+      {isDepositOpen && (
+        <PaystackDeposit 
+          onClose={() => setIsDepositOpen(false)} 
+          onDeposit={handleDeposit}
         />
       )}
     </div>
