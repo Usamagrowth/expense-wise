@@ -133,10 +133,28 @@ export const useTransactions = () => {
     // Demo Mode / LocalStorage Fallback
     if (!db || user.providerId === 'demo' || localStorage.getItem('demo_mode') === 'true') {
         try {
-            console.log("Deleting transaction:", id); // Debug log
-            const updated = transactions.filter(t => t.id !== id);
+            console.log("Deleting transaction:", id);
+            
+            // READ FRESH FROM STORAGE TO AVOID STALE STATE
+            const stored = localStorage.getItem(`transactions_${user.uid}`);
+            if (!stored) return;
+
+            const currentTransactions = JSON.parse(stored);
+            const updated = currentTransactions.filter((t: any) => t.id !== id);
+            
             localStorage.setItem(`transactions_${user.uid}`, JSON.stringify(updated));
-            setTransactions(updated);
+            
+            // Hydrate for state
+            const hydrated = updated.map((t: any) => ({
+                ...t,
+                date: {
+                  seconds: t.date?.seconds || Math.floor(Date.now() / 1000),
+                  nanoseconds: t.date?.nanoseconds || 0,
+                  toDate: () => new Date((t.date?.seconds || Math.floor(Date.now() / 1000)) * 1000)
+                }
+            }));
+            
+            setTransactions(hydrated);
             return;
         } catch (err) {
             console.error(err);
