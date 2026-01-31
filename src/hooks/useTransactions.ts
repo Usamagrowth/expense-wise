@@ -133,6 +133,7 @@ export const useTransactions = () => {
     // Demo Mode / LocalStorage Fallback
     if (!db || user.providerId === 'demo' || localStorage.getItem('demo_mode') === 'true') {
         try {
+            console.log("Deleting transaction:", id); // Debug log
             const updated = transactions.filter(t => t.id !== id);
             localStorage.setItem(`transactions_${user.uid}`, JSON.stringify(updated));
             setTransactions(updated);
